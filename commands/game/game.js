@@ -37,6 +37,17 @@ module.exports = {
                     await interaction.reply({ embeds: [embed], components: [] });
                 } else {
                     const game = data.results[0];
+                    const stores = game.stores.map(store => {
+                        switch (store.store.slug) {
+                            case 'steam':
+                                return `[Steam](https://store.steampowered.com/app/${store.store_id})`;
+                            case 'epic-games':
+                                return `[Epic Games](https://www.epicgames.com/store/en-US/p/${store.slug})`;
+                            default:
+                                return `[${store.store.name}](${store.url})`;
+                        }
+                    }).join(', ');
+
                     const embed = {
                         title: game.name,
                         description: game.description_raw || 'No description available.',
@@ -58,6 +69,11 @@ module.exports = {
                                 name: 'Genres',
                                 value: game.genres.map(genre => genre.name).join(', '),
                                 inline: true,
+                            },
+                            {
+                                name: 'Download Links',
+                                value: stores || 'Not available',
+                                inline: false,
                             },
                         ],
                         url: game.website || '',
